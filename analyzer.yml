@@ -1,0 +1,74 @@
+name: analyzer
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Temp input for workflow to run adhoc'
+        required: false
+        default: 'Ignore this field'
+
+  push:
+    paths-ignore:
+      - '**.md'
+      - '**.py'
+      - '**.js'
+      - '.github/**'
+
+
+jobs:
+  analyzer:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: checkout repo content
+        uses: actions/checkout@v2 # checkout the repository content to github runner
+
+      - name: setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          
+      - name: install node modules
+        run: npm install node-fetch
+          
+      - name: execute node script # run sj-gobierno.py to get the latest data
+        run: node .github/analyzer_run.js $GITHUB_WORKSPACE
+        id: analyzer-script
+      
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.7.7' # install the python version needed
+          
+      - name: install python packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install jinja2
+          
+      - name: execute py script # run sj-gobierno.py to get the latest data
+        run: python .github/analyzer_render_template.py $GITHUB_WORKSPACE
+      
+      - name: Create Issue
+        uses: JasonEtco/create-an-issue@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JSON: ${{ steps.analyzer-script.outputs.OUTPUT_JSON }}"
+        with:
+          filename: .github/ISSUE.md
+
+      # - name: print outputs
+      #   run: echo "The output is ${{ steps.analyzer-script.outputs.OUTPUT_JSON }}"
+          
+      # - name: commit files
+      #   run: |
+      #     git config --local user.email "action@github.com"
+      #     git config --local user.name "GitHub Action"
+      #     git add README.md
+      #     git commit -m "Regenerating README after last commit"
+          
+      # - name: push changes
+      #   uses: ad-m/github-push-action@v0.6.0
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     branch: main  

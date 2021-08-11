@@ -8,7 +8,7 @@ env = Environment(loader=file_loader)
 
 template = env.get_template('ANALYZER_ISSUE_TEMPLATE.md')
 
-with open(path.join(sys.argv[1],'.github','test.json')) as f:
+with open(path.join('.github','test.json')) as f:
     issues = loads(f.read())
 # issues = loads(sys.argv[1])
 

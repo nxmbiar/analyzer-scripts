@@ -20,7 +20,7 @@ fetch('https://raw.githubusercontent.com/CiscoSecurity/sxo-05-security-workflows
                 return
             }
             fs.readdirSync(file).forEach(innerFile => {
-                wf_name = `${wf_name}/${innerFile}`
+                wf_name = wf_name + '/' + innerFile
                 output_json[wf_name] = Array()
                 innerFile = path.join(file,innerFile)
                 console.log(innerFile);

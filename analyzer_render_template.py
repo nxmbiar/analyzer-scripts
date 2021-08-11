@@ -14,5 +14,5 @@ with open(path.join(sys.argv[1],'.github','test.json')) as f:
 
 output = template.render(issues=issues)
 
-with open(path.join(path.dirname(__file__),'ISSUE.md'),'w', encoding="utf-8") as f:
+with open(path.join(path.dirname(__file__),'ISSUE.md'),'w', encoding='utf-8') as f:
     f.write(output)

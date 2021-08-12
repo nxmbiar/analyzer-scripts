@@ -7,7 +7,7 @@ labels: bug
 
 {% for key, value in failed_issues.items() %}
 {% for issue in value %}
-- [ ] In [{{ key.split('_')[0] }}]( /{{ key }} ) - {{ issue['title'] }} - {{ issue['description'] }} - {{ issue['moreInfo']}}
+- [ ] In [{{ key.split('_')[0] }}]( ../blob/master/{{ key }} ) - {{ issue['title'] }} - {{ issue['description'] }} - {{ issue['moreInfo']}}
 {% endfor %}
 {% endfor %}
 

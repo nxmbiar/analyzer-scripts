@@ -1,5 +1,3 @@
-// require("docs\assets\scripts\analyzer")
-
 const fs = require('fs');
 const path = require('path')
 const fetch = require('node-fetch');
@@ -9,19 +7,19 @@ fetch('https://raw.githubusercontent.com/CiscoSecurity/sxo-05-security-workflows
   .then(data => {
     eval(data+'');
     let repo = process.argv[2]
-    let output_json = {}
+    let failed_issues = {}
     fs.readdirSync(repo).forEach(file => {
         // console.log(file);
         let wf_name = file
         file = path.join(repo,file)
         if(fs.statSync(file).isDirectory()){
-            // if(file.split('\\')[7].includes('.git') || file.includes('node_modules')){
-            if(file.includes('.git') || file.includes('node_modules')){
+            if(file.split('\\')[7].includes('.git') || file.includes('node_modules')){
+            // if(file.includes('.git') || file.includes('node_modules')){
                 return
             }
             fs.readdirSync(file).forEach(innerFile => {
                 wf_name = wf_name + '/' + innerFile
-                output_json[wf_name] = Array()
+                failed_issues[wf_name] = Array()
                 innerFile = path.join(file,innerFile)
                 console.log(innerFile);
                 var wf = fs.readFileSync(innerFile, 'utf-8')
@@ -32,17 +30,17 @@ fetch('https://raw.githubusercontent.com/CiscoSecurity/sxo-05-security-workflows
                 for (const key in analyzed['response']['details']) {
                     analyzed['response']['details'][key].forEach(element => {
                         if(element['type'] == 'error'){
-                            // console.log(`${element['title']} - ${element['description']} - ${element['moreInfo']}`)
-                            output_json[wf_name].push(element)
+                            // console.log()
+                            failed_issues[wf_name].push(element)
                         }
                     });
                 }
 
-                if(output_json[wf_name].length == 0){
-                    delete output_json[wf_name]
+                if(failed_issues[wf_name].length == 0){
+                    delete failed_issues[wf_name]
                 }
               });
-            //   console.log(output_json)
+            //   console.log(failed_issues)
         }
         // else if(fs.statSync(file).isFile() && (file.includes('package-lock') || file.includes('.git') || file.includes('test.json'))){
         //     var wf = fs.readFileSync(file, 'utf-8')
@@ -52,12 +50,12 @@ fetch('https://raw.githubusercontent.com/CiscoSecurity/sxo-05-security-workflows
         // }
       });
 
-      fs.writeFile(path.join(".github","test.json"), JSON.stringify(output_json), function(err) {
+      fs.writeFile(path.join(".github","failed_issues.json"), JSON.stringify(failed_issues), function(err) {
         if (err) {
             console.log(err);
         }
     });
 
-      console.log(`::set-output name=OUTPUT_JSON::${JSON.stringify(output_json)}`)
+      console.log()
   })
   .catch(err => console.error(err))

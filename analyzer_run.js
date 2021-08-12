@@ -13,8 +13,8 @@ fetch('https://raw.githubusercontent.com/CiscoSecurity/sxo-05-security-workflows
         let wf_name = file
         file = path.join(repo,file)
         if(fs.statSync(file).isDirectory()){
-            if(file.split('\\')[7].includes('.git') || file.includes('node_modules')){
-            // if(file.includes('.git') || file.includes('node_modules')){
+            // if(file.split('\\')[7].includes('.git') || file.includes('node_modules')){
+            if(file.includes('.git') || file.includes('node_modules')){
                 return
             }
             fs.readdirSync(file).forEach(innerFile => {

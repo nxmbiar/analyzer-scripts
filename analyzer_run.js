@@ -1,3 +1,5 @@
+// require("docsssets\scriptsnalyzer")
+
 const fs = require('fs');
 const path = require('path')
 const fetch = require('node-fetch');
@@ -8,6 +10,8 @@ fetch('https://raw.githubusercontent.com/CiscoSecurity/sxo-05-security-workflows
     eval(data+'');
     let repo = process.argv[2]
     let failed_issues = {}
+    let warnings = {}
+    let successes = {}
     fs.readdirSync(repo).forEach(file => {
         // console.log(file);
         let wf_name = file
@@ -20,10 +24,15 @@ fetch('https://raw.githubusercontent.com/CiscoSecurity/sxo-05-security-workflows
             fs.readdirSync(file).forEach(innerFile => {
                 wf_name = wf_name + '/' + innerFile
                 failed_issues[wf_name] = Array()
+                warnings[wf_name] = Array()
+                successes[wf_name] = Array()
                 innerFile = path.join(file,innerFile)
                 console.log(innerFile);
                 var wf = fs.readFileSync(innerFile, 'utf-8')
-            
+                
+                if(wf.includes('!#NOANALYZER')){
+                    return
+                }
                 let analyzed = analyzeWorkflow(wf)
                 // console.log(analyzed)
 
@@ -33,11 +42,25 @@ fetch('https://raw.githubusercontent.com/CiscoSecurity/sxo-05-security-workflows
                             // console.log()
                             failed_issues[wf_name].push(element)
                         }
+                        if(element['type'] == 'success'){
+                            // console.log()
+                            successes[wf_name].push(element)
+                        }
+                        if(element['type'] == 'warning'){
+                            // console.log()
+                            warnings[wf_name].push(element)
+                        }
                     });
                 }
 
                 if(failed_issues[wf_name].length == 0){
                     delete failed_issues[wf_name]
+                }
+                if(successes[wf_name].length == 0){
+                    delete successes[wf_name]
+                }
+                if(warnings[wf_name].length == 0){
+                    delete warnings[wf_name]
                 }
               });
             //   console.log(failed_issues)
@@ -51,6 +74,16 @@ fetch('https://raw.githubusercontent.com/CiscoSecurity/sxo-05-security-workflows
       });
 
       fs.writeFile(path.join(".github","failed_issues.json"), JSON.stringify(failed_issues), function(err) {
+        if (err) {
+            console.log(err);
+        }
+    });
+      fs.writeFile(path.join(".github","warnings.json"), JSON.stringify(warnings), function(err) {
+        if (err) {
+            console.log(err);
+        }
+    });
+      fs.writeFile(path.join(".github","successes.json"), JSON.stringify(successes), function(err) {
         if (err) {
             console.log(err);
         }

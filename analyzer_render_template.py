@@ -26,7 +26,7 @@ with open(path.join(sys.argv[1],'.github','wf.json')) as f:
 
 
 # print(wfs)
-output = template.render(issues=issues, warnings=warnings, successes=successes, wfs=wfs)
+output = template.render(issues=issues, warnings=warnings, successes=successes, wfs=wfs, hash=sys.argv[2])
 
 with open(path.join(path.dirname(__file__),'ISSUE.md'),'w', encoding="utf-8") as f:
     f.write(output)

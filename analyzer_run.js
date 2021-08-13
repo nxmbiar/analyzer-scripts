@@ -21,9 +21,6 @@ fetch('https://raw.githubusercontent.com/CiscoSecurity/sxo-05-security-workflows
             }
             fs.readdirSync(file).forEach(innerFile => {
                 wf_name = wf_name + '/' + innerFile
-                failed_issues[wf_name] = Array()
-                warnings[wf_name] = Array()
-                successes[wf_name] = Array()
                 innerFile = path.join(file,innerFile)
                 console.log(innerFile);
                 var wf = fs.readFileSync(innerFile, 'utf-8')
@@ -31,6 +28,10 @@ fetch('https://raw.githubusercontent.com/CiscoSecurity/sxo-05-security-workflows
                 if(wf.includes('!#NOANALYZER')){
                     return
                 }
+
+                failed_issues[wf_name] = Array()
+                warnings[wf_name] = Array()
+                successes[wf_name] = Array()
                 let analyzed = analyzeWorkflow(wf)
                 // console.log(analyzed)
 

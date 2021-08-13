@@ -1,5 +1,4 @@
 ---
-title: SecureX Orchestration Workflow Analyzer Results
 labels: bug
 ---
 

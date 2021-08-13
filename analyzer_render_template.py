@@ -14,16 +14,18 @@ with open(path.join(sys.argv[1],'.github','successes.json')) as f:
     successes = loads(f.read())
 with open(path.join(sys.argv[1],'.github','warnings.json')) as f:
     warnings = loads(f.read())
+with open(path.join(sys.argv[1],'.github','wf.json')) as f:
+    wfs = loads(f.read()[:-1])
 # issues = loads(sys.argv[1])
 
-wfs = []
-wfs.extend(issues.keys())
-wfs.extend(warnings.keys())
-wfs.extend(successes.keys())
+# print(test)
+# wfs = []
+# wfs.extend(issues.keys())
+# wfs.extend(warnings.keys())
+# wfs.extend(successes.keys())
 
-wfs = list(set(wfs))
 
-print(wfs)
+# print(wfs)
 output = template.render(issues=issues, warnings=warnings, successes=successes, wfs=wfs)
 
 with open(path.join(path.dirname(__file__),'ISSUE.md'),'w', encoding="utf-8") as f:

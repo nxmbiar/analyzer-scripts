@@ -16,7 +16,15 @@ with open(path.join(sys.argv[1],'.github','warnings.json')) as f:
     warnings = loads(f.read())
 # issues = loads(sys.argv[1])
 
-output = template.render(failed_issues=issues, warnings=warnings, successes=successes)
+wfs = []
+wfs.extend(issues.keys())
+wfs.extend(warnings.keys())
+wfs.extend(successes.keys())
+
+wfs = list(set(wfs))
+
+print(wfs)
+output = template.render(issues=issues, warnings=warnings, successes=successes, wfs=wfs)
 
 with open(path.join(path.dirname(__file__),'ISSUE.md'),'w', encoding="utf-8") as f:
     f.write(output)

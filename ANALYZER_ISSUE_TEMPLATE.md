@@ -1,29 +1,37 @@
 ---
-title: Auto-Generated Issue By Analyzer Workflow
+title: SecureX Orchestration Workflow Analyzer Results, {{ date | dddd MMMM Do YYYY H:mm:ss UTC}}
 labels: bug
 ---
 
-## The following errors were analyzed in the last commit
+[SecureX Orchestration Workflow Analyzer](https://github.com/ciscomanagedservices/sxo-analyzer) analyzed your last commit. An itemized list of issues found in checks that ran are grouped by workflow name (click ▶ to expand) & presented below as 'tasks' for your review.
 
-{% for key, value in failed_issues.items() %}
-{% for issue in value %}
-- [ ] In [{{ key.split('_')[0] }}]( /{{ key }} ) - {{ issue['title'] }} - {{ issue['description'] }} - {{ issue['moreInfo']}}
+> 🎯 **Pro Tip:** You can covert each task on this list into an issue of it's own to break down work and to assign to others. Check out [this](https://m.youtube.com/watch?v=BplF7vHXewA) video for more!
+
+---
+
+
+{% for wf in wfs %}
+<details>
+<summary><strong>{{ wf.split('_')[0] }} [<a href="../blob/master/{{wf}}">link</a>]</strong></summary>
+{% if issues.get(wf) != None %}
+### 😞 Failed
+{% for issue in issues.get(wf) %}
+- [ ] {{ issue['title'] }} - {{ issue['description'] }} - {{ issue['moreInfo']}}
 {% endfor %}
+{% endif %}
+
+{% if warnings.get(wf) != None %}
+### 😶 Warnings
+{% for warning in warnings.get(wf) %}
+- [ ] {{ warning['title'] }} - {{ warning['description'] }} - {{ warning['moreInfo']}}
 {% endfor %}
+{% endif %}
 
-
-## The following warnings were analyzed in the last commit
-
-{% for key, value in warnings.items() %}
-{% for issue in value %}
-- [ ] In [{{ key.split('_')[0] }}]( /{{ key }} ) - {{ issue['title'] }} - {{ issue['description'] }} - {{ issue['moreInfo']}}
+{% if successes.get(wf) != None %}
+### 🥳 Passed
+{% for success in successes.get(wf) %}
+- [x] {{ success['title'] }} - {{ success['description'] }} - {{ success['moreInfo']}}
 {% endfor %}
-{% endfor %}
-
-## The following items were correctly done in the last commit
-
-{% for key, value in successes.items() %}
-{% for issue in value %}
-- [ ] In [{{ key.split('_')[0] }}]( /{{ key }} ) - {{ issue['title'] }} - {{ issue['description'] }} - {{ issue['moreInfo']}}
-{% endfor %}
+{% endif %}
+</details>
 {% endfor %}

@@ -1,5 +1,5 @@
 ---
-title: SecureX Orchestration Workflow Analyzer Results, {{ date | dddd MMMM Do YYYY H:mm:ss UTC}}
+title: SecureX Orchestration Workflow Analyzer Results
 labels: bug
 ---
 

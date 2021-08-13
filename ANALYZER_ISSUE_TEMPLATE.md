@@ -1,5 +1,5 @@
 ---
-title: SecureX Orchestration Workflow Analyzer Results 
+title: SecureX Orchestration Workflow Analyzer Results - Commit {{ hash[:7] }}
 labels: bug
 ---
 

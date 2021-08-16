@@ -18,7 +18,8 @@ with open(path.join(sys.argv[1],'.github','wf.json')) as f:
     wfs = loads(f.read()[:-1])
 # issues = loads(sys.argv[1])
 
-# print(test)
+print(issues)
+print(wfs)
 # wfs = []
 # wfs.extend(issues.keys())
 # wfs.extend(warnings.keys())

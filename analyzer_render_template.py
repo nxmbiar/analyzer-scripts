@@ -25,16 +25,27 @@ print(wfs)
 # wfs.extend(warnings.keys())
 # wfs.extend(successes.keys())
 
-no_issues = True
+wf_analyzed = []
+for wf in wfs:
+    if issues.keys().get(wf) != None or successes.keys().get(wf) != None or warningskeys().get(wf) == None:
+        wf_analyzed.append(wf)
+
+no_issue = False
+if len(wf_analyzed) == 0:
+    no_issue = True
+print(f'::set-output name=no_issue::${no_issue}')
+sys.exit(0)
+
+close_issues = True
 for wf in wfs:
     try:
         if len(issues[wf]) != 0 or len(warnings[wf]) != 0:
-            no_issues = False
+            close_issues = False
             break
     except KeyError:
         continue
 
-print(f'::set-output name=no_issues::${no_issues}')
+print(f'::set-output name=close_issues::${close_issues}')
 # print(wfs)
 output = template.render(issues=issues, warnings=warnings, successes=successes, wfs=wfs, hash=sys.argv[2])
 

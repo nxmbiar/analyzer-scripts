@@ -1,6 +1,6 @@
 ---
 title: SecureX Orchestration Workflow Analyzer Results - Commit {{ hash[:7] }}
-labels: bug
+labels: sxo-analyzer
 ---
 
 [SecureX Orchestration Workflow Analyzer](https://github.com/ciscomanagedservices/sxo-analyzer) analyzed your last commit {{ hash }}. An itemized list of issues found in checks that ran are grouped by workflow name (click ▶ to expand) & presented below as 'tasks' for your review.

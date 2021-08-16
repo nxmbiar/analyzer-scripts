@@ -28,8 +28,8 @@ no_issue = False
 if len(wf_analyzed) == 0:
     no_issue = True
 print(f'::set-output name=no_issue::${no_issue}')
-time.sleep(2)
-sys.exit(0)
+# time.sleep(2)
+# sys.exit(0)
 
 close_issues = True
 for wf in wfs:

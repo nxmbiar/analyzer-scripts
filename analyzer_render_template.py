@@ -24,7 +24,12 @@ with open(path.join(sys.argv[1],'.github','wf.json')) as f:
 # wfs.extend(warnings.keys())
 # wfs.extend(successes.keys())
 
+no_issues = True
+for wf in wfs:
+    if len(issues[wf]) != 0:
+        no_issues = False
 
+print(f'::set-output name=no_issues::${no_issues}')
 # print(wfs)
 output = template.render(issues=issues, warnings=warnings, successes=successes, wfs=wfs, hash=sys.argv[2])
 

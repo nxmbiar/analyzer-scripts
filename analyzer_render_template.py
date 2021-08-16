@@ -27,8 +27,11 @@ print(wfs)
 
 no_issues = True
 for wf in wfs:
-    if len(issues[wf]) != 0:
-        no_issues = False
+    try:
+        if len(issues[wf]) != 0:
+            no_issues = False
+    except KeyError:
+        continue
 
 print(f'::set-output name=no_issues::${no_issues}')
 # print(wfs)

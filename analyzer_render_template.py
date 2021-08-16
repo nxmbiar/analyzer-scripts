@@ -2,6 +2,7 @@ from jinja2 import Environment, FileSystemLoader
 from os import path
 from json import loads
 import sys
+import time
 
 file_loader = FileSystemLoader(path.join(path.dirname(__file__),'templates'))
 env = Environment(loader=file_loader)
@@ -18,13 +19,6 @@ with open(path.join(sys.argv[1],'.github','wf.json')) as f:
     wfs = loads(f.read()[:-1])
 # issues = loads(sys.argv[1])
 
-print(issues)
-print(wfs)
-# wfs = []
-# wfs.extend(issues.keys())
-# wfs.extend(warnings.keys())
-# wfs.extend(successes.keys())
-
 wf_analyzed = []
 for wf in wfs:
     if issues.get(wf) != None or successes.get(wf) != None or warnings.get(wf) != None:
@@ -34,6 +28,7 @@ no_issue = False
 if len(wf_analyzed) == 0:
     no_issue = True
 print(f'::set-output name=no_issue::${no_issue}')
+time.sleep(2)
 sys.exit(0)
 
 close_issues = True

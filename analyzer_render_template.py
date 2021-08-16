@@ -28,8 +28,9 @@ print(wfs)
 no_issues = True
 for wf in wfs:
     try:
-        if len(issues[wf]) != 0:
+        if len(issues[wf]) != 0 or len(warnings[wf]) != 0:
             no_issues = False
+            break
     except KeyError:
         continue
 

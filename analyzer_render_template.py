@@ -27,7 +27,7 @@ print(wfs)
 
 wf_analyzed = []
 for wf in wfs:
-    if issues.keys().get(wf) != None or successes.keys().get(wf) != None or warningskeys().get(wf) == None:
+    if issues.get(wf) != None or successes.get(wf) != None or warnings.get(wf) != None:
         wf_analyzed.append(wf)
 
 no_issue = False

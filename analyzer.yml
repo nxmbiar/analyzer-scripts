@@ -15,60 +15,100 @@ on:
       - '**.js'
       - '.github/**'
 
-
 jobs:
   analyzer:
     runs-on: ubuntu-latest
     steps:
 
-      - name: checkout repo content
+      - name: Checkout Repo Content
         uses: actions/checkout@v2 # checkout the repository content to github runner
 
-      - name: setup node
+      - name: Setup Node
         uses: actions/setup-node@v2
         with:
           node-version: '14'
           
-      - name: install node modules
+      - name: Install Node Modules
         run: npm install node-fetch
+
+      - name: Get analyzer-run
+        id: analyzer-run
+        uses: fjogeleit/http-request-action@master
+        with:
+          url: "https://raw.githubusercontent.com/nxmbiar/analyzer-scripts/main/analyzer_run.js"
+          method: 'GET'
+
+      - name: Write analyzer-run
+        run: printf $${{ steps.analyzer-run.outputs.response }} > .github/analyzer_run.js
           
-      - name: execute node script # run sj-gobierno.py to get the latest data
+      - name: Execute Node Script
         run: node .github/analyzer_run.js $GITHUB_WORKSPACE
         id: analyzer-script
+
+      - name: Get analyzer-render-template
+        id: analyzer-render-template
+        uses: fjogeleit/http-request-action@master
+        with:
+          url: "https://raw.githubusercontent.com/nxmbiar/analyzer-scripts/main/analyzer_render_template.py"
+          method: 'GET'
+
+      - name: Create template Directory if does not exist
+        run: mkdir -p .github/templates
+        
+      - name: Write analyzer-render-template
+        run: printf $${{ steps.analyzer-render-template.outputs.response }} >> .github/analyzer_render_template.py
       
-      - name: setup python
+      - name: Get analyzer-issue-template
+        id: analyzer-issue-template
+        uses: fjogeleit/http-request-action@master
+        with:
+          url: "https://raw.githubusercontent.com/nxmbiar/analyzer-scripts/main/ANALYZER_ISSUE_TEMPLATE.md"
+          method: 'GET'
+
+      - name: Write analyzer-issue-template
+        run: |
+          line=$(echo $${{ steps.analyzer-issue-template.outputs.response }} | sed -r 's/%/%%/g')
+          printf -- "$line" >> .github/templates/ANALYZER_ISSUE_TEMPLATE.md
+      
+      - name: Fetch Changed Files
+        id: files
+        uses: jitterbit/get-changed-files@v1
+        with:
+          format: 'json'
+    
+      - name: Write Changed Files
+        run: printf '%s,' '${{ steps.files.outputs.added_modified }}' > .github/wf.json
+      
+      - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.7.7' # install the python version needed
+          python-version: '3.7.7'
           
-      - name: install python packages
+      - name: Install Python Packages
         run: |
           python -m pip install --upgrade pip
           pip install jinja2
           
-      - name: execute py script # run sj-gobierno.py to get the latest data
-        run: python .github/analyzer_render_template.py $GITHUB_WORKSPACE
+      - name: Execute Python Script
+        id: run-python-script
+        run: python .github/analyzer_render_template.py $GITHUB_WORKSPACE $GITHUB_SHA
+      
+      - run: echo ${{ steps.run-python-script.outputs.no_issue }}, ${{ steps.run-python-script.outputs.close_issues }}
       
       - name: Create Issue
+        if: ${{ steps.run-python-script.outputs.no_issue == 'False' }}
         uses: JasonEtco/create-an-issue@v2
+        id: create-issue
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JSON: ${{ steps.analyzer-script.outputs.OUTPUT_JSON }}"
         with:
           filename: .github/ISSUE.md
-
-      # - name: print outputs
-      #   run: echo "The output is ${{ steps.analyzer-script.outputs.OUTPUT_JSON }}"
-          
-      # - name: commit files
-      #   run: |
-      #     git config --local user.email "action@github.com"
-      #     git config --local user.name "GitHub Action"
-      #     git add README.md
-      #     git commit -m "Regenerating README after last commit"
-          
-      # - name: push changes
-      #   uses: ad-m/github-push-action@v0.6.0
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     branch: main  
+          # assignees:  # edit this field to change the assignees to the issue, you can remove this if the issue need not be assigned when created
+      
+      - name: Close Issue If No Failures
+        uses: peter-evans/close-issue@v1
+        with:
+          issue-number: ${{ steps.create-issue.outputs.number }}
+          comment: Auto-closing issue because no failures or warnings detected
+        if: ${{ steps.run-python-script.outputs.no_issue == 'False' && steps.run-python-script.outputs.close_issues }}

@@ -17,21 +17,21 @@ labels: sxo-analyzer
 ### 😞 Failed
 {% for issue in issues.get(wf) %}
 - [ ] {{ issue['title'] }} - {{ issue['description'] }} - {{ issue['moreInfo']}}
-{% endfor %}
-{% endif %}
+{%- endfor %}
+{%- endif %}
 
 {% if warnings.get(wf) != None %}
 ### 😶 Warnings
 {% for warning in warnings.get(wf) %}
 - [ ] {{ warning['title'] }} - {{ warning['description'] }} - {{ warning['moreInfo']}}
-{% endfor %}
-{% endif %}
+{%- endfor %}
+{%- endif %}
 
 {% if successes.get(wf) != None %}
 ### 🥳 Passed
 {% for success in successes.get(wf) %}
 - [x] {{ success['title'] }} - {{ success['description'] }} - {{ success['moreInfo']}}
-{% endfor %}
-{% endif %}
+{%- endfor %}
+{%- endif %}
 </details>
 {% endfor %}

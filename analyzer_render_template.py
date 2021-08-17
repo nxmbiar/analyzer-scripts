@@ -33,6 +33,7 @@ print(f'::set-output name=no_issue::${no_issue}')
 
 close_issues = True
 for wf in wfs:
+    print(len(issues[wf]),len(warnings[wf]))
     try:
         if len(issues[wf]) != 0 or len(warnings[wf]) != 0:
             close_issues = False

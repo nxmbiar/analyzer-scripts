@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path')
-const fetch = require('node-fetch');
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 fetch('https://raw.githubusercontent.com/CiscoSecurity/sxo-05-security-workflows/Main/docs/assets/scripts/analyzer.js')
   .then(response => response.text())
